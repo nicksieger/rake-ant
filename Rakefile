@@ -35,3 +35,11 @@ namespace :ant do
     ant.jar :destfile => "greeter.jar", :basedir => "build"
   end
 end
+
+require 'cucumber/rake/task'
+$CLASSPATH << "build"
+
+desc "Run Cucumber on the project"
+Cucumber::Rake::Task.new(:cucumber => "plain:compile")
+
+task :default => :cucumber
