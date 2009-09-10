@@ -40,6 +40,6 @@ require 'cucumber/rake/task'
 $CLASSPATH << "build"
 
 desc "Run Cucumber on the project"
-Cucumber::Rake::Task.new(:cucumber => "plain:compile")
+Cucumber::Rake::Task.new(:features => "plain:compile")
 
-task :default => :cucumber
+task :default => :features
