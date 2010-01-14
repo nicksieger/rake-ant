@@ -1,13 +1,13 @@
 $LOAD_PATH.unshift "./lib"
-require 'ant'
 
 src_dir = 'src/main/java'
 build_dir = 'target'
 directory build_dir
 
+# Plain, free-form command-line
 namespace :plain do
   desc "Compile the code"
-  task :compile => build_dir do |t|
+  task :compile => build_dir do
     files = FileList["src/**/*.java"]
     cpath =  FileList["lib/*.jar"].join(':')
     sh "javac -d #{build_dir} -classpath #{cpath} #{files}"
@@ -19,6 +19,8 @@ namespace :plain do
   end
 end
 
+# Ant-based tasks
+require 'ant'
 namespace :ant do
   desc "Compile the code using Ant"
   ant_task :compile => build_dir do
