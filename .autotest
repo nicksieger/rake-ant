@@ -1,0 +1,34 @@
+# -*- ruby -*-
+# Autotest config -- not working yet
+$v = true
+ENV['RSPEC'] = 'true'
+puts "rake-ant .autotest"
+
+class Autotest
+  def add_sigint_handler
+  end
+end
+
+Autotest.add_hook :initialize do |at|
+  puts "initialize"
+  at.add_exception(/target/)
+  at.add_mapping(/^src\/.*\.java$/) do |filename, _|
+    possible = File.basename(filename).downcase.gsub '_', '_?'
+    files_matching %r%^src/spec/ruby/.*#{possible}%
+  end
+end
+
+Autotest.add_hook :run_command do |at|
+  at.unit_diff = "cat"
+  system "jruby -S rake plain:compile"
+end
+
+Autotest.add_hook :ran_command do |at|
+  File.open('/tmp/autotest.txt', 'wb') { |f|
+    f.write(at.results.join)
+  }
+end
+
+Autotest.add_hook :waiting do
+  puts "waiting..."
+end
