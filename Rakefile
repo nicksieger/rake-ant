@@ -43,8 +43,8 @@ namespace :ant do
   end
 end
 
+# Set classpath for RSpec and Cucumber
 $CLASSPATH << classes_dir
-ENV['CLASSPATH'] = classes_dir
 
 # RSpec
 require 'spec/rake/spectask'
