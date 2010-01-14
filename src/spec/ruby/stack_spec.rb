@@ -5,12 +5,12 @@ import "ruby.StackUnderflowError"
 require File.dirname(__FILE__) + '/shared_stack_examples'
 
 describe Stack, " (empty)" do
-  before(:each) do
+
+  subject do
     @stack = Stack.new
   end
 
-  # NOTE that this one auto-generates the description "should be empty"
-  it { @stack.should be_empty }
+  it { should be_empty }
 
   it_should_behave_like "non-full Stack"
 
@@ -21,13 +21,16 @@ describe Stack, " (empty)" do
   it "should complain when sent #pop" do
     lambda { @stack.pop }.should raise_error(StackUnderflowError)
   end
+
 end
 
 describe Stack, " (with one item)" do
-  before(:each) do
-    @stack = Stack.new
-    @stack.push 3
+
+  subject do
     @last_item_added = 3
+    @stack = Stack.new
+    @stack.push @last_item_added
+    @stack
   end
 
   it_should_behave_like "non-empty Stack"
@@ -36,25 +39,29 @@ describe Stack, " (with one item)" do
 end
 
 describe Stack, " (with one item less than capacity)" do
-  before(:each) do
+
+  subject do
     @stack = Stack.new
     (1..9).each { |i| @stack.push i }
     @last_item_added = 9
+    @stack
   end
 
   it_should_behave_like "non-empty Stack"
   it_should_behave_like "non-full Stack"
+
 end
 
 describe Stack, " (full)" do
-  before(:each) do
+
+  subject do
     @stack = Stack.new
     (1..10).each { |i| @stack.push i }
     @last_item_added = 10
+    @stack
   end
 
-  # NOTE that this one auto-generates the description "should be full"
-  it { @stack.should be_full }
+  it { should be_full }
 
   it_should_behave_like "non-empty Stack"
 

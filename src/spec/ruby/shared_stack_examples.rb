@@ -1,6 +1,6 @@
 shared_examples_for "non-empty Stack" do
 
-  it { @stack.should_not be_empty }
+  it { should_not be_empty }
 
   it "should return the top item when sent #peek" do
     @stack.peek.should == @last_item_added
@@ -26,7 +26,7 @@ end
 
 shared_examples_for "non-full Stack" do
 
-  it { @stack.should_not be_full }
+  it { should_not be_full }
 
   it "should add to the top when sent #push" do
     @stack.push "newly added top item"
