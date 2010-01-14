@@ -1,4 +1,7 @@
+require 'java'
 import "ruby.Stack"
+import "ruby.StackOverflowError"
+import "ruby.StackUnderflowError"
 require File.dirname(__FILE__) + '/shared_stack_examples'
 
 describe Stack, " (empty)" do

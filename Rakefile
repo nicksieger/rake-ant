@@ -2,20 +2,22 @@ $LOAD_PATH.unshift "./lib"
 
 src_dir = 'src/main/java'
 build_dir = 'target'
-directory build_dir
+classes_dir = 'target/classes'
+jar_file = "#{build_dir}/rake-ant.jar"
+directory classes_dir
 
 # Plain, free-form command-line
 namespace :plain do
   desc "Compile the code"
-  task :compile => build_dir do
-    files = FileList["src/**/*.java"]
+  task :compile => classes_dir do
+    files = FileList["#{src_dir}/**/*.java"]
     cpath =  FileList["lib/*.jar"].join(':')
-    sh "javac -d #{build_dir} -classpath #{cpath} #{files}"
+    sh "javac -d #{classes_dir} -classpath #{cpath} #{files}"
   end
 
   desc "Create a jar file of the compiled code"
   task :jar => :compile do
-    sh "jar cf greeter.jar -C #{build_dir} ."
+    sh "jar cf #{jar_file} -C #{classes_dir} ."
   end
 end
 
@@ -23,9 +25,9 @@ end
 require 'ant'
 namespace :ant do
   desc "Compile the code using Ant"
-  ant_task :compile => build_dir do
-    puts "Compiling java from #{src_dir} to #{build_dir}"
-    javac :srcdir => src_dir, :destdir => build_dir do
+  ant_task :compile => classes_dir do
+    puts "Compiling java from #{src_dir} to #{classes_dir}"
+    javac :srcdir => src_dir, :destdir => classes_dir do
       classpath do
         FileList["lib/*.jar"].each do |jar|
           pathelement :path => jar
@@ -36,10 +38,13 @@ namespace :ant do
 
   desc "Create a jar file of the compiled code using Ant"
   ant_task :jar => "ant:compile" do
-    puts "Creating greeter.jar"
-    jar :destfile => "greeter.jar", :basedir => build_dir
+    puts "Creating #{jar_file}"
+    jar :destfile => jar_file, :basedir => classes_dir
   end
 end
+
+$CLASSPATH << classes_dir
+ENV['CLASSPATH'] = classes_dir
 
 # RSpec
 require 'spec/rake/spectask'
@@ -51,7 +56,6 @@ end
 
 # Cucumber
 require 'cucumber/rake/task'
-$CLASSPATH << build_dir
 
 desc "Run Cucumber on the project"
 Cucumber::Rake::Task.new(:features => "ant:compile")
@@ -60,4 +64,4 @@ task :default => :features
 
 # Clean
 require 'rake/clean'
-CLEAN << build_dir << "greeter.jar"
+CLEAN << build_dir
