@@ -34,6 +34,7 @@ namespace :ant do
 
   desc "Create a jar file of the compiled code using Ant"
   ant_task :jar => "ant:compile" do
+    puts "Creating greeter.jar"
     jar :destfile => "greeter.jar", :basedir => build_dir
   end
 end

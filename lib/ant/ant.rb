@@ -21,13 +21,14 @@ class Ant
     @options = options
     @project = create_project options
     initialize_elements
-    @default = Target.new # Add generic target until this gets connected
-    block.arity == 1 ? block[self] : instance_eval(&block) if block_given?
-    @default.execute
+    if block_given?
+      add_target("default", &block)
+      execute_target("default")
+    end
   end
 
   def create_project(options)
-    Project.new.tap do |p| 
+    Project.new.tap do |p|
       p.init
       p.add_build_listener(DefaultLogger.new.tap do |log|
         log.output_print_stream = java.lang.System.out
@@ -36,6 +37,21 @@ class Ant
         log.message_output_level = options[:output_level] || 1
       end)
     end
+  end
+
+  def add_target(name, &block)
+    unless @project.targets.include?(name)
+      @current_target = Target.new.tap do |t|
+        t.name = name
+        t.project = @project
+        @project.add_target(t)
+      end
+      block.arity == 1 ? block[self] : instance_eval(&block) if block_given?
+    end
+  end
+
+  def execute_target(name)
+    @project.execute_target(name)
   end
 
   # For each default data type and task definitions we generate top-level
@@ -70,8 +86,8 @@ class Ant
   def generate_children(collection)
     collection.each do |name, clazz|
       element = acquire_element(name, clazz)
-      self.class.send(:define_method, name) do |*a, &b| 
-        element.call(@default, *a, &b)
+      self.class.send(:define_method, name) do |*a, &b|
+        element.call(@current_target, *a, &b)
       end
     end
   end
