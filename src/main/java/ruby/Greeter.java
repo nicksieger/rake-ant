@@ -1,4 +1,4 @@
-package rake;
+package ruby;
 
 public class Greeter {
     private final String message;
