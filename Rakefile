@@ -11,7 +11,7 @@ namespace :plain do
   desc "Compile the code"
   task :compile => classes_dir do
     files = FileList["#{src_dir}/**/*.java"]
-    cpath =  FileList["lib/*.jar"].join(':')
+    cpath = FileList["lib/*.jar"].join(':')
     sh "javac -d #{classes_dir} -classpath #{cpath} #{files}"
   end
 
