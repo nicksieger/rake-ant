@@ -1,6 +1,6 @@
 package ruby;
 
-public class StackOverflowError extends Exception {
+public class StackOverflowError extends RuntimeException {
     public StackOverflowError() {
     }
     public StackOverflowError(String message) {

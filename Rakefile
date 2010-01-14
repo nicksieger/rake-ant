@@ -52,6 +52,7 @@ spec_dir = 'src/spec/ruby'
 desc "Run RSpec on the project"
 Spec::Rake::SpecTask.new do |t|
   t.spec_files = FileList["#{spec_dir}/**/*_spec.rb"]
+  t.spec_opts << '--format specdoc'
 end
 
 # Cucumber
