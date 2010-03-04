@@ -1,11 +1,11 @@
 require 'ant'
-ant :name => "rake-ant", :default => "help" do
+ant :name => "rake-ant", :default => :help do
   property :name => "src.dir", :value => "src/main/java"
   property :name => "build.dir", :value => "target"
   property :name => "classes.dir", :value => "${build.dir}/classes"
   property :name => "jar.file", :value => "${build.dir}/rake-ant.jar"
 
-  target "clean", :description => "Clean the output" do
+  target :name => :clean, :description => "Clean the output" do
     delete :dir => "${build.dir}"
   end
 
@@ -27,11 +27,11 @@ ant :name => "rake-ant", :default => "help" do
     jar :destfile => "${jar.file}", :basedir => "${classes.dir}"
   end
 
-  target :name => "help" do
+  target :help do
     echo :message => <<-MSG
 Welcome to the #{project.name} project.
 
-This is an example of a Ruby-based ant build. Look in `#{__FILE__}' to
+This is an example of a Ruby-based Ant build. Look in `#{__FILE__}' to
 see the project's contents.
 
 #{project_help}
