@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<project name="rake-ant" default="help">
+    <property name="src.dir" value="src/main/java"/>
+    <property name="build.dir" value="target"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.file" value="${build.dir}/rake-ant.jar"/>
+
+    <target name="clean" description="Clean the output">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="classes_dir">
+        <mkdir dir="${classes.dir}"/>
+    </target>
+
+    <target name="compile" depends="classes_dir" description="Compile the code">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}">
+            <classpath>
+                <fileset dir="lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile" description="Create the jar file">
+        <jar destfile="${jar.file}" basedir="${classes.dir}"/>
+    </target>
+
+    <target name="help">
+        <echo>
+            Welcome to the ${ant.project.name} project.
+            Type 'ant -projecthelp' for details.
+        </echo>
+    </target>
+</project>
