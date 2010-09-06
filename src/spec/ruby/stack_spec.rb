@@ -1,67 +1,70 @@
 require 'java'
-import "ruby.Stack"
-import "ruby.StackOverflowError"
-import "ruby.StackUnderflowError"
+java_import "ruby.Stack"
+java_import "ruby.StackOverflowError"
+java_import "ruby.StackUnderflowError"
 require File.dirname(__FILE__) + '/shared_stack_examples'
 
-describe Stack, " (empty)" do
+describe Stack do
 
-  subject { Stack.new }
+  context "empty" do
 
-  it { should be_empty }
+    subject { Stack.new }
 
-  it_should_behave_like "non-full Stack"
+    it { should be_empty }
 
-  it "should complain when sent #peek" do
-    lambda { subject.peek }.should raise_error(StackUnderflowError)
+    it_should_behave_like "non-full Stack"
+
+    it "should complain when sent #peek" do
+      lambda { subject.peek }.should raise_error(StackUnderflowError)
+    end
+
+    it "should complain when sent #pop" do
+      lambda { subject.pop }.should raise_error(StackUnderflowError)
+    end
+
   end
 
-  it "should complain when sent #pop" do
-    lambda { subject.pop }.should raise_error(StackUnderflowError)
+  context "with one item" do
+
+    before :all do
+      @last_item_added = 3
+    end
+
+    subject { Stack.new.tap {|stack| stack.push @last_item_added } }
+
+    it_should_behave_like "non-empty Stack"
+    it_should_behave_like "non-full Stack"
+
   end
 
-end
+  context "with one item less than capacity" do
 
-describe Stack, " (with one item)" do
+    before :all do
+      @last_item_added = 9
+    end
 
-  before :all do
-    @last_item_added = 3
+    subject { Stack.new.tap {|stack| (1..9).each { |i| stack.push i } } }
+
+    it_should_behave_like "non-empty Stack"
+    it_should_behave_like "non-full Stack"
+
   end
 
-  subject { Stack.new.tap {|stack| stack.push @last_item_added } }
+  context "full" do
 
-  it_should_behave_like "non-empty Stack"
-  it_should_behave_like "non-full Stack"
+    before :all do
+      @last_item_added = 10
+    end
 
-end
+    subject { Stack.new.tap {|stack| (1..10).each { |i| stack.push i } } }
 
-describe Stack, " (with one item less than capacity)" do
+    it { should be_full }
 
-  before :all do
-    @last_item_added = 9
+    it_should_behave_like "non-empty Stack"
+
+    it "should complain on #push" do
+      lambda { subject.push Object.new }.should raise_error(StackOverflowError)
+    end
+
   end
-
-  subject { Stack.new.tap {|stack| (1..9).each { |i| stack.push i } } }
-
-  it_should_behave_like "non-empty Stack"
-  it_should_behave_like "non-full Stack"
-
-end
-
-describe Stack, " (full)" do
-
-  before :all do
-    @last_item_added = 10
-  end
-
-  subject { Stack.new.tap {|stack| (1..10).each { |i| stack.push i } } }
-
-  it { should be_full }
-
-  it_should_behave_like "non-empty Stack"
-
-  it "should complain on #push" do
-    lambda { subject.push Object.new }.should raise_error(StackOverflowError)
-  end
-
 end
