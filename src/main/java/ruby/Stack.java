@@ -1,13 +1,9 @@
 package ruby;
 
-public class Stack {
-    private Object[] stack;
-    private int top;
-
-    public Stack() {
-        stack = new Object[10];
-        top = -1;
-    }
+@SuppressWarnings({"unchecked"})
+public class Stack<T> {
+    private T[] stack = (T[]) new Object[10];
+    private int top = -1;
 
     public boolean isEmpty() {
         return top < 0;
@@ -17,7 +13,7 @@ public class Stack {
         return top >= stack.length - 1;
     }
 
-    public Object peek() {
+    public T peek() {
         if (isEmpty()) {
             throw new StackUnderflowError();
         }
@@ -25,13 +21,13 @@ public class Stack {
         return stack[top];
     }
 
-    public Object pop() {
-        Object o = peek();
+    public T pop() {
+        T o = peek();
         top--;
         return o;
     }
 
-    public void push(Object o) {
+    public void push(T o) {
         if (isFull()) {
             throw new StackOverflowError();
         }
