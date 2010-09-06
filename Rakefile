@@ -1,3 +1,6 @@
+require "rubygems"
+require "bundler/setup"
+
 $LOAD_PATH.unshift "./lib"
 
 src_dir = 'src/main/java'
@@ -25,9 +28,9 @@ end
 require 'ant'
 namespace :ant do
   desc "Compile the code using Ant"
-  ant_task :compile => classes_dir do
+  task :compile => classes_dir do
     puts "Compiling java from #{src_dir} to #{classes_dir}"
-    javac :srcdir => src_dir, :destdir => classes_dir do
+    ant.javac :srcdir => src_dir, :destdir => classes_dir do
       classpath do
         FileList["lib/*.jar"].each do |jar|
           pathelement :path => jar
@@ -37,9 +40,9 @@ namespace :ant do
   end
 
   desc "Create a jar file of the compiled code using Ant"
-  ant_task :jar => "ant:compile" do
+  task :jar => "ant:compile" do
     puts "Creating #{jar_file}"
-    jar :destfile => jar_file, :basedir => classes_dir
+    ant.jar :destfile => jar_file, :basedir => classes_dir
   end
 end
 
@@ -50,10 +53,12 @@ $CLASSPATH << classes_dir
 require 'spec/rake/spectask'
 spec_dir = 'src/spec/ruby'
 desc "Run RSpec on the project"
-Spec::Rake::SpecTask.new do |t|
+Spec::Rake::SpecTask.new(:spec => "ant:compile")do |t|
   t.spec_files = FileList["#{spec_dir}/**/*_spec.rb"]
   t.spec_opts << '--format specdoc'
 end
+
+task :default => :spec
 
 # Cucumber
 require 'cucumber/rake/task'
