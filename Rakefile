@@ -48,15 +48,17 @@ end
 
 # Set classpath for RSpec and Cucumber
 $CLASSPATH << classes_dir
+ENV['CLASSPATH'] = $CLASSPATH.to_a.join(File::PATH_SEPARATOR)
 
 # RSpec
-require 'spec/rake/spectask'
+require 'rspec/core/rake_task'
 spec_dir = 'src/spec/ruby'
 desc "Run RSpec on the project"
-Spec::Rake::SpecTask.new(:spec => "ant:compile")do |t|
-  t.spec_files = FileList["#{spec_dir}/**/*_spec.rb"]
-  t.spec_opts << '--format specdoc'
+RSpec::Core::RakeTask.new do |t|
+  t.pattern = "#{spec_dir}/**/*_spec.rb"
+  t.rspec_opts = '--format documentation'
 end
+task :spec => "ant:compile"
 
 task :default => :spec
 
